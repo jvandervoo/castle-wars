@@ -1,0 +1,25 @@
+version: "3"
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: castle-wars-client
+    volumes:
+      - ./client/:/app
+    #   - /app/node_modules
+    ports:
+      - 3000:3000
+
+  # be:
+  #   build:
+  #     context: ./be
+  #     dockerfile: Dockerfile
+  #   container_name: castle-wars-be
+  #   volumes:
+  #     - castle-wars:/data/be
+  #   ports:
+  #     - 4000:4000
+
+volumes:
+  castle-wars:
