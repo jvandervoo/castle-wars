@@ -22,20 +22,14 @@ services:
     ports:
      - 8080:8080
     depends_on:
-     - "dynamodb-local"
-    links:
-     - "dynamodb-local"
+     - "mongo"
     environment:
-      AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
-      AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
-      REGION: 'eu-west-1'
+      - MONGODB_URI=mongodb://castle-wars-mongo:27017/castle-wars
 
-  dynamodb-local:
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
-    image: amazon/dynamodb-local
-    container_name: castle-wars-dynamodb-local
+  mongo:
+    image: mongo
+    container_name: castle-wars-mongo
     volumes:
-      - ./docker/dynamodb:/home/dynamodblocal/data
+      - ./server/mongodb:/data/db
     ports:
-      - 8000:8000
-    working_dir: /home/dynamodblocal
+      - 27017:27017
