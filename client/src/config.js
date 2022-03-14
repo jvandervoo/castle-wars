@@ -1,1 +1,1 @@
-export const WS_BASE = "http://localhost:8080";
+export const WS_BASE = "http://:8080";

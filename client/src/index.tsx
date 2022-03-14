@@ -4,12 +4,15 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import LiveCounterContextProvider from "./contexts/LiveCounterContext";
+import SocketContextProvider from "./contexts/SocketContext";
 
 ReactDOM.render(
   <React.StrictMode>
-    <LiveCounterContextProvider>
-      <App />
-    </LiveCounterContextProvider>
+    <SocketContextProvider>
+      <LiveCounterContextProvider>
+        <App />
+      </LiveCounterContextProvider>
+    </SocketContextProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

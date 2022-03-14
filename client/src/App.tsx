@@ -4,7 +4,6 @@ import { Counter } from "./Counter";
 import { LiveCounterContext } from "./contexts/LiveCounterContext";
 
 function App() {
-  // const [count, setCount] = useState<number>(0);
   const { counter, sendIncrement } = useContext(LiveCounterContext);
 
   return (

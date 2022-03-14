@@ -1,6 +1,6 @@
-import React, { useState, createContext } from "react";
-import io from "socket.io-client";
-import { WS_BASE } from "../config";
+import React, { useState, createContext, useContext } from "react";
+import { SocketContext } from "./SocketContext";
+import { ISocketIncrementMessage } from "./SocketContext";
 
 interface IContext {
   counter: number;
@@ -13,20 +13,24 @@ export const LiveCounterContext = createContext<IContext>({
 });
 
 const LiveCounterContextProvider: React.FC = ({ children }) => {
+  const { socket } = useContext(SocketContext);
   const [counter, setCounter] = useState<number>(0);
-  const socket = io(WS_BASE);
+  console.log('Hello');
 
-  socket.on("connection", () => console.log("connected!@!!!!!!!!!@!@"));
+  if (!socket) {
+    return <></>;
+  }
 
-  socket.on("event://get-increment", (msg) => {
-    const payload = JSON.parse(msg);
-    console.log(payload);
-    setCounter(payload);
+  socket.on("getIncrement", (msg:ISocketIncrementMessage) => {
+    console.log('Incrementing the counter interface for socket: ', socket.id);
+    console.log(msg);
+    const { count } = msg;
+    setCounter(count);
   });
 
   const sendIncrement = () => {
-    socket.emit("event://send-increment");
-    setCounter((s) => s + 1);
+    console.log('sending increment event %s', socket.id);
+    socket.emit("setIncrement");
   };
 
   return (
@@ -37,17 +41,3 @@ const LiveCounterContextProvider: React.FC = ({ children }) => {
 };
 
 export default LiveCounterContextProvider;
-
-// import React, { useState, createContext } from "react";
-
-// export const AppStateContext = createContext();
-
-// const AppStateContextProvider = props => {
-//   const [appState, setAppState] = useState({
-//     cartOpen: false
-//   });
-
-//   return <AppStateContext.Provider value={{ appState, setAppState }}>{props.children}</AppStateContext.Provider>;
-// };
-
-// export default AppStateContextProvider;
