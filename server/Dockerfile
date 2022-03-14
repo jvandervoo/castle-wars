@@ -1,7 +1,13 @@
-# syntax=docker/dockerfile:1
-FROM python:3.10-slim-buster
+FROM node:alpine AS base
 WORKDIR /app
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+COPY package.json ./
+RUN npm install
+
+FROM base AS local
+RUN npm install -g nodemon
 COPY . .
-CMD [ "python3", "app.py"]
+CMD ["npm", "run", "dev"]
+
+FROM base AS prod
+COPY . .
+CMD ["npm", "run", "start"]

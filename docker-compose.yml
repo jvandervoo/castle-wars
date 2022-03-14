@@ -9,11 +9,33 @@ services:
       - ./client/:/app
     ports:
       - 3000:3000
-  web:
-   build:
-    context: ./server
-   container_name: castle-wars-server
-   ports:
-     - 8000:5000
-   volumes:
-     - ./server:/app
+
+  node:
+    restart: always
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    build:
+      context: ./server
+      target: local
+    container_name: castle-wars-server
+    ports:
+     - 8080:8080
+    depends_on:
+     - "dynamodb-local"
+    links:
+     - "dynamodb-local"
+    environment:
+      AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
+      AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
+      REGION: 'eu-west-1'
+
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: amazon/dynamodb-local
+    container_name: castle-wars-dynamodb-local
+    volumes:
+      - ./docker/dynamodb:/home/dynamodblocal/data
+    ports:
+      - 8000:8000
+    working_dir: /home/dynamodblocal
