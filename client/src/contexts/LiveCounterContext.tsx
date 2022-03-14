@@ -2,7 +2,15 @@ import React, { useState, createContext } from "react";
 import io from "socket.io-client";
 import { WS_BASE } from "../config";
 
-export const LiveCounterContext = createContext({});
+interface IContext {
+  counter: number;
+  sendIncrement: () => void;
+}
+
+export const LiveCounterContext = createContext<IContext>({
+  counter: 0,
+  sendIncrement: () => {},
+});
 
 const LiveCounterContextProvider: React.FC = ({ children }) => {
   const [counter, setCounter] = useState<number>(0);
