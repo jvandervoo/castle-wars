@@ -1,11 +1,22 @@
 import React, { useState, createContext, useContext } from "react";
 import { SocketContext } from "./SocketContext";
-import { ISocketIncrementMessage } from "./SocketContext";
 
 interface IContext {
   counter: number;
   sendIncrement: () => void;
 }
+
+interface ISocketIncrementMessage {
+  count: number;
+}
+
+// interface ServerToClientEvents {
+//   getIncrement: (msg: ISocketIncrementMessage) => void;
+// }
+
+// interface ClientToServerEvents {
+//   setIncrement: () => void;
+// }
 
 export const LiveCounterContext = createContext<IContext>({
   counter: 0,
@@ -15,21 +26,20 @@ export const LiveCounterContext = createContext<IContext>({
 const LiveCounterContextProvider: React.FC = ({ children }) => {
   const { socket } = useContext(SocketContext);
   const [counter, setCounter] = useState<number>(0);
-  console.log('Hello');
+  console.log("LiveCounterContextProvider render");
 
   if (!socket) {
     return <></>;
   }
 
-  socket.on("getIncrement", (msg:ISocketIncrementMessage) => {
-    console.log('Incrementing the counter interface for socket: ', socket.id);
-    console.log(msg);
+  socket.on("getIncrement", (msg: ISocketIncrementMessage) => {
+    console.log("getIncrement", socket.id);
     const { count } = msg;
     setCounter(count);
   });
 
   const sendIncrement = () => {
-    console.log('sending increment event %s', socket.id);
+    console.log("setIncrement", socket.id);
     socket.emit("setIncrement");
   };
 

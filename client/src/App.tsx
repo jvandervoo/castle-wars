@@ -6,6 +6,7 @@ import { LiveCounterContext } from "./contexts/LiveCounterContext";
 function App() {
   const { counter, sendIncrement } = useContext(LiveCounterContext);
 
+  console.log("render app");
   return (
     <div className="App">
       <header className="App-header" onClick={sendIncrement}>
