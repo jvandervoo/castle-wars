@@ -1,16 +1,16 @@
 import { useContext } from "react";
 import "./App.css";
+import { SocketContext } from "./contexts/SocketContext";
 import { Counter } from "./Counter";
-import { LiveCounterContext } from "./contexts/LiveCounterContext";
 
 function App() {
-  const { counter, sendIncrement } = useContext(LiveCounterContext);
+  const { count, sendIncrement } = useContext(SocketContext);
 
   console.log("render app");
   return (
     <div className="App">
       <header className="App-header" onClick={sendIncrement}>
-        <Counter count={counter} />
+        <Counter count={count} />
       </header>
     </div>
   );

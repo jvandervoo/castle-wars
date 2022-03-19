@@ -22,13 +22,14 @@ io.on("connection", (socket) => {
     // count: counter.count,
     count,
   };
-  io.emit("getIncrement", msg);
+  // to the socket that just connected
+  socket.emit("SERVER_EMIT_COUNT", msg);
 
   const size = io.of("/").sockets.size;
   console.log("Number of sockets: %s", size);
 
-  socket.on("setIncrement", () => {
-    console.log("incrementing %s", socket.id);
+  socket.on("CLIENT_EMIT_COUNT", () => {
+    console.log("CLIENT_EMIT_COUNT %s", socket.id);
     // counter.increment() ;
     count++;
     // counter.save();
@@ -36,7 +37,8 @@ io.on("connection", (socket) => {
       // count: counter.count,
       count,
     };
-    io.emit("getIncrement", msg);
+    // to all sockets
+    io.emit("SERVER_EMIT_COUNT", msg);
   });
 });
 

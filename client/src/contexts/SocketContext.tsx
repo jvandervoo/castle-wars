@@ -1,22 +1,48 @@
-import React, { createContext } from "react";
-import { io, Socket } from "socket.io-client";
+import React, { createContext, useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import { WS_BASE } from "../config";
 
 interface IContext {
-  socket: Socket | null;
+  count: number;
+  sendIncrement: () => void;
 }
 
 export const SocketContext = createContext<IContext>({
-  socket: null,
+  count: 0,
+  sendIncrement: () => {},
 });
+
+interface ISocketIncrementMessage {
+  count: number;
+}
+
+const socket = io(WS_BASE);
 
 const SocketContextProvider: React.FC = ({ children }) => {
   console.log("SocketContextProvider render");
-  const socket = io(WS_BASE);
-  socket.on("connection", () => console.log("connected"));
+  const [count, setCount] = useState<number>(0);
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("socket connected");
+    });
+  }, []);
+
+  useEffect(() => {
+    socket.on("SERVER_EMIT_COUNT", (msg: ISocketIncrementMessage) => {
+      console.log("SERVER_EMIT_COUNT", socket.id);
+      const { count } = msg;
+      setCount(count);
+    });
+  }, []);
+
+  const sendIncrement = () => {
+    console.log("CLIENT_EMIT_COUNT", socket?.id);
+    socket?.emit("CLIENT_EMIT_COUNT");
+  };
 
   return (
-    <SocketContext.Provider value={{ socket }}>
+    <SocketContext.Provider value={{ count, sendIncrement }}>
       {children}
     </SocketContext.Provider>
   );

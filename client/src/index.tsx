@@ -3,15 +3,12 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import LiveCounterContextProvider from "./contexts/LiveCounterContext";
 import SocketContextProvider from "./contexts/SocketContext";
 
 ReactDOM.render(
   <React.StrictMode>
     <SocketContextProvider>
-      <LiveCounterContextProvider>
-        <App />
-      </LiveCounterContextProvider>
+      <App />
     </SocketContextProvider>
   </React.StrictMode>,
   document.getElementById("root")
