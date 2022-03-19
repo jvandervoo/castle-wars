@@ -3,6 +3,7 @@ import { createServer } from "http";
 import mongoose from "mongoose";
 import express from "express";
 import { Server } from "socket.io";
+import path from "path";
 
 const app = express();
 const httpServer = createServer(app);
@@ -13,16 +14,34 @@ const io = new Server(httpServer, {
   },
 });
 
+// CONSTANTS
+// ----------------------------------------------------------------------------
+const __dirname = path.dirname(__filename);
+const PORT = process.env.PORT || 5000;
+const MONGODB_URI = process.env.MONGODB_URI;
+
+// GLOBALS
+// ----------------------------------------------------------------------------
 let count = 0;
 
+// ROUTES
+// ----------------------------------------------------------------------------
+
+/**
+ * serve the build folder
+ */
+app.use(express.static(path.join(__dirname, "../build")));
+
+/**
+ * websocket server endpoint
+ */
 io.on("connection", (socket) => {
   console.log(socket.id);
   console.log("Got socket: %s", socket.id);
   const msg = {
-    // count: counter.count,
     count,
   };
-  // to the socket that just connected
+  // emit to the socket that just connected
   socket.emit("SERVER_EMIT_COUNT", msg);
 
   const size = io.of("/").sockets.size;
@@ -30,38 +49,22 @@ io.on("connection", (socket) => {
 
   socket.on("CLIENT_EMIT_COUNT", () => {
     console.log("CLIENT_EMIT_COUNT %s", socket.id);
-    // counter.increment() ;
     count++;
-    // counter.save();
     const msg = {
-      // count: counter.count,
       count,
     };
-    // to all sockets
+    // emit to all sockets
     io.emit("SERVER_EMIT_COUNT", msg);
   });
 });
 
-// // Counter Schema
-// const counterSchema = new mongoose.Schema({
-//   count: Number,
-// });
-// counterSchema.methods.increment = function increment() {
-//   this.count++;
-// };
-// const Counter = mongoose.model("counter", counterSchema);
-
-// const counter = new Counter({ count: 0 });
-
-const uri = process.env.MONGODB_URI;
-
 mongoose
-  .connect(uri, {
+  .connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => {
     console.log("mongodb connected");
-    httpServer.listen(8080);
+    httpServer.listen(PORT);
   })
   .catch((err) => console.log(err));
