@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import express from "express";
 import { Server } from "socket.io";
 import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const httpServer = createServer(app);
@@ -16,6 +17,7 @@ const io = new Server(httpServer, {
 
 // CONSTANTS
 // ----------------------------------------------------------------------------
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
